@@ -302,14 +302,31 @@
 
             let secundariosOK = cond_C1_PC && cond_C1_730;
 
+            // -------- RECOPILAR MOTIVOS DE FALLO --------
+            let motivosFallo = [];
+            if (!cond_C3) motivosFallo.push(`C3 (${C3}) es menor al límite (${cfg_c3})`);
+            if (!cond_C1_C3) motivosFallo.push(`La diferencia C1-C3 (${difC1_C3.toFixed(2)}) está fuera del rango (${cfg_dif_min} a ${cfg_dif_max})`);
+            if (!cond_R2) motivosFallo.push(`R2 (${R2}) es menor al límite`);
+            if (!cond_NC_ND) motivosFallo.push(`NC no tiene el valor 'ND'`);
+
+            let motivosAdvertencia = [];
+            if (!cond_C1_PC) motivosAdvertencia.push(`C1 no es mayor que PC`);
+            if (!cond_C1_730) motivosAdvertencia.push(`C1 no supera el valor sugerido de ${cfg_c1_sug}`);
+
             // -------- EVALUAR RESULTADO --------
             divResultado.style.display = "block";
 
             if (!criticosOK) {
-                divResultado.innerHTML = "❌ <strong>Repetir</strong>";
+                let htmlFallo = "❌ <strong>Repetir</strong><br><div style='text-align: left; font-size: 0.85em; font-weight: normal; margin-top: 10px;'>Causa del fallo:<ul>";
+                motivosFallo.forEach(m => htmlFallo += `<li>${m}</li>`);
+                htmlFallo += "</ul></div>";
+                divResultado.innerHTML = htmlFallo;
                 divResultado.className = "resultado repetir";
             } else if (criticosOK && !secundariosOK) {
-                divResultado.innerHTML = "⚠️ <strong>Válido</strong><br><span style='font-size:0.85em;font-weight:normal;'>pero se aconseja repetir</span>";
+                let htmlAdv = "⚠️ <strong>Válido</strong><br><span style='font-size:0.85em;font-weight:normal;'>pero se aconseja repetir por:</span><div style='text-align: left; font-size: 0.85em; font-weight: normal; margin-top: 10px;'><ul>";
+                motivosAdvertencia.forEach(m => htmlAdv += `<li>${m}</li>`);
+                htmlAdv += "</ul></div>";
+                divResultado.innerHTML = htmlAdv;
                 divResultado.className = "resultado advertencia";
             } else if (criticosOK && secundariosOK) {
                 divResultado.innerHTML = "✅ <strong>Válido</strong>";
