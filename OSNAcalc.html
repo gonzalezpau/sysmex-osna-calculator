@@ -172,6 +172,24 @@
             padding: 5px;
             float: right;
         }
+
+        .criterios-info {
+            background-color: #fafbfc;
+            border: 1px solid var(--border-color);
+            padding: 12px 15px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            margin-top: 15px;
+            color: #555;
+            line-height: 1.4;
+        }
+        .criterios-info strong {
+            color: var(--sysmex-dark);
+        }
+        .criterios-info ul {
+            margin: 6px 0 0 0;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -201,12 +219,13 @@
             <tr><td>C2</td><td><input type="text" id="C2" onkeyup="calcular()" autocomplete="off"></td></tr>
             <tr><td>C3</td><td><input type="text" id="C3" onkeyup="calcular()" placeholder="Ej: 3:00" autocomplete="off"></td></tr>
             <tr><td>PC</td><td><input type="text" id="PC" onkeyup="calcular()" autocomplete="off"></td></tr>
-            <tr><td>NC</td><td><input type="text" id="NC" onkeyup="calcular()" autocomplete="off"></td></tr>
-            <tr><td>ND</td><td><input type="text" id="ND" onkeyup="calcular()" placeholder="Valor para comparar" autocomplete="off"></td></tr>
+            <tr><td>NC</td><td><input type="text" id="NC" onkeyup="calcular()" placeholder="Debe ser ND" autocomplete="off"></td></tr>
             <tr><td>R2</td><td><input type="text" id="R2" onkeyup="calcular()" placeholder="Ej: 0.980" autocomplete="off"></td></tr>
         </table>
 
         <button class="btn-limpiar" onclick="limpiar()">Borrar Campos</button>
+
+        <div id="criteriosInfo" class="criterios-info"></div>
 
         <div id="mensajeResultado" class="resultado" style="display: none;"></div>
     </div>
@@ -244,14 +263,13 @@
             let PC = parsearNumero(document.getElementById("PC").value);
             let R2 = parsearNumero(document.getElementById("R2").value);
             
-            // Textos (para NC y ND que podrían ser palabras o códigos alfanuméricos)
+            // Textos (para NC que podrían ser palabras o códigos alfanuméricos)
             let NC = document.getElementById("NC").value.trim().toLowerCase();
-            let ND = document.getElementById("ND").value.trim().toLowerCase();
 
             let divResultado = document.getElementById("mensajeResultado");
 
             // Validar si hay valores mínimos para evaluar
-            if (isNaN(C1) || isNaN(C3) || isNaN(R2) || NC === "" || ND === "") {
+            if (isNaN(C1) || isNaN(C3) || isNaN(R2) || NC === "") {
                 divResultado.style.display = "none";
                 return; // Faltan datos críticos para decidir
             }
@@ -266,13 +284,15 @@
             let cfg_r2 = parseFloat(document.getElementById("cfg_r2").value) || 0.980;
             let cfg_c1_sug = parseFloat(document.getElementById("cfg_c1_sug").value) || 7.30;
 
+            actualizarCriteriosUI(cfg_c3, cfg_dif_min, cfg_dif_max, cfg_r2, cfg_c1_sug);
+
             // -------- CONDICIONES CRÍTICAS (A) --------
             let cond_C3 = C3 >= cfg_c3;
             let cond_C1_C3 = difC1_C3 >= cfg_dif_min && difC1_C3 <= cfg_dif_max;
             // Se adapta R2 para valores enteros (ej. 980 en vez de 0.98) si el cfg es < 1
             let limitR2_int = cfg_r2 < 1 ? cfg_r2 * 1000 : cfg_r2;
             let cond_R2 = R2 >= cfg_r2 || R2 >= limitR2_int; 
-            let cond_NC_ND = (NC === ND);
+            let cond_NC_ND = (NC === "nd");
 
             let criticosOK = cond_C3 && cond_C1_C3 && cond_R2 && cond_NC_ND;
 
@@ -296,6 +316,25 @@
                 divResultado.className = "resultado valido";
             }
         }
+
+        function actualizarCriteriosUI(c3, dif_min, dif_max, r2, c1_sug) {
+            let html = `<strong>Criterios en uso:</strong>
+                <ul>
+                    <li><strong>Obligatorios:</strong> C3 ≥ ${c3} | Dif (C1-C3) entre ${dif_min} y ${dif_max} | R2 ≥ ${r2} | NC = ND</li>
+                    <li><strong>Recomendados:</strong> C1 > PC | C1 > ${c1_sug}</li>
+                </ul>`;
+            document.getElementById("criteriosInfo").innerHTML = html;
+        }
+
+        // Mostrar criterios al cargar la página por primera vez
+        window.onload = function() {
+            let c3 = parseFloat(document.getElementById("cfg_c3").value) || 3.00;
+            let d_min = parseFloat(document.getElementById("cfg_dif_min").value) || 0.39;
+            let d_max = parseFloat(document.getElementById("cfg_dif_max").value) || 2.41;
+            let r2 = parseFloat(document.getElementById("cfg_r2").value) || 0.980;
+            let c1_sug = parseFloat(document.getElementById("cfg_c1_sug").value) || 7.30;
+            actualizarCriteriosUI(c3, d_min, d_max, r2, c1_sug);
+        };
     </script>
 </body>
 </html>
