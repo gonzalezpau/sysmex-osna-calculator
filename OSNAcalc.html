@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Validación OSNA - Sysmex</title>
+    <title>Validacion Curva Standard Osna</title>
     <style>
         :root {
             --sysmex-green: #008752;
@@ -33,32 +33,38 @@
         }
 
         .logo {
-            height: 45px;
+            height: 48px;
         }
 
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            background: linear-gradient(180deg, #ffffff 0%, #fbfeff 100%);
+            padding: 34px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(4,31,38,0.06);
             width: 100%;
-            max-width: 450px;
+            max-width: 560px;
             box-sizing: border-box;
+            border: 1px solid rgba(12,35,27,0.04);
         }
 
         h2 {
             margin-top: 0;
             color: var(--sysmex-dark);
-            text-align: center;
-            font-size: 1.4em;
-            margin-bottom: 25px;
-            font-weight: 600;
+            text-align: left;
+            font-size: 1.5em;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .subtitle {
+            margin: 0 0 18px 0;
+            color: #556b63;
+            font-size: 0.95em;
         }
 
         table { 
             border-collapse: collapse; 
             width: 100%; 
-            margin-bottom: 25px; 
+            margin-bottom: 18px; 
         }
 
         th, td { 
@@ -77,12 +83,13 @@
         input { 
             width: 100%; 
             box-sizing: border-box; 
-            padding: 8px 12px;
+            padding: 10px 12px;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1em;
+            border-radius: 8px;
+            font-size: 1.02em;
             outline: none;
-            transition: border-color 0.2s;
+            transition: box-shadow 0.18s, border-color 0.18s, transform 0.12s;
+            background: #ffffff;
         }
 
         input:focus {
@@ -91,31 +98,31 @@
         }
 
         .btn-limpiar { 
-            background-color: transparent; 
-            color: #666; 
-            border: 1px solid #ccc; 
-            padding: 10px 15px; 
+            background-color: var(--sysmex-green); 
+            color: white; 
+            border: none; 
+            padding: 12px 16px; 
             cursor: pointer; 
-            border-radius: 4px; 
-            font-size: 0.9em;
+            border-radius: 10px; 
+            font-size: 0.95em;
             width: 100%;
-            transition: all 0.2s;
-            font-weight: 600;
+            transition: transform 0.12s ease, box-shadow 0.12s ease;
+            font-weight: 700;
+            box-shadow: 0 6px 18px rgba(0,135,82,0.12);
         }
 
-        .btn-limpiar:hover { 
-            background-color: #f0f0f0; 
-            color: var(--sysmex-dark);
-        }
+        .btn-limpiar:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,135,82,0.14); }
 
         .resultado { 
-            font-size: 1.1em; 
-            font-weight: bold; 
-            padding: 15px; 
-            border-radius: 4px; 
-            text-align: center; 
+            font-size: 1.06em; 
+            font-weight: 700; 
+            padding: 18px; 
+            border-radius: 10px; 
+            text-align: left; 
             margin-top: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 24px rgba(7,25,20,0.04);
+            transition: transform 0.18s ease, opacity 0.18s ease;
+            display: flex; align-items: center; gap: 12px; justify-content: space-between;
         }
 
         .valido { background-color: #d4edda; color: #155724; border-left: 5px solid #28a745; }
@@ -190,6 +197,31 @@
             margin: 6px 0 0 0;
             padding-left: 20px;
         }
+        .resumen-container {
+            background-color: #fbfcfd;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.92em;
+            color: #333;
+        }
+        .btn-copy {
+            background-color: var(--sysmex-green);
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-copy:active { transform: translateY(1px); }
+        @media (max-width: 520px) {
+            .container { padding: 18px; max-width: 100%; border-radius: 8px; }
+            h2 { font-size: 1.25em; }
+            .subtitle { font-size: 0.88em; }
+            input { padding: 10px; }
+            .resultado { flex-direction: column; align-items: stretch; }
+        }
     </style>
 </head>
 <body>
@@ -200,7 +232,7 @@
 
     <div class="container">
         <button class="btn-config" onclick="toggleConfig()">Configuración</button>
-        <h2>Validación OSNA</h2>
+        <h2>Validacion Curva Standard Osna</h2>
 
         <div id="configPanel" class="config-panel">
             <h3>Parámetros Base</h3>
@@ -209,7 +241,7 @@
                 <label>R2 ≥ <input type="number" id="cfg_r2" value="0.980" step="0.001" onchange="calcular()"></label>
                 <label>Dif min (C1-C3): <input type="number" id="cfg_dif_min" value="0.39" step="0.01" onchange="calcular()"></label>
                 <label>Dif max (C1-C3): <input type="number" id="cfg_dif_max" value="2.41" step="0.01" onchange="calcular()"></label>
-                <label>C1 Sugerido > <input type="number" id="cfg_c1_sug" value="7.30" step="0.01" onchange="calcular()"></label>
+                <label>C1 Sugerido ≤ <input type="number" id="cfg_c1_sug" value="7.30" step="0.01" onchange="calcular()"></label>
             </div>
         </div>
 
@@ -217,10 +249,10 @@
             <tr><th>Campo</th><th>Valor</th></tr>
             <tr><td>C1</td><td><input type="text" id="C1" onkeyup="calcular()" autofocus autocomplete="off"></td></tr>
             <tr><td>C2</td><td><input type="text" id="C2" onkeyup="calcular()" autocomplete="off"></td></tr>
-            <tr><td>C3</td><td><input type="text" id="C3" onkeyup="calcular()" placeholder="Ej: 3:00" autocomplete="off"></td></tr>
+            <tr><td>C3</td><td><input type="text" id="C3" onkeyup="calcular()" autocomplete="off"></td></tr>
             <tr><td>PC</td><td><input type="text" id="PC" onkeyup="calcular()" autocomplete="off"></td></tr>
-            <tr><td>NC</td><td><input type="text" id="NC" onkeyup="calcular()" placeholder="Debe ser ND" autocomplete="off"></td></tr>
-            <tr><td>R2</td><td><input type="text" id="R2" onkeyup="calcular()" placeholder="Ej: 0.980" autocomplete="off"></td></tr>
+            <tr><td>NC</td><td><input type="text" id="NC" onkeyup="calcular()" autocomplete="off"></td></tr>
+            <tr><td>R2</td><td><input type="text" id="R2" onkeyup="calcular()" autocomplete="off"></td></tr>
         </table>
 
         <button class="btn-limpiar" onclick="limpiar()">Borrar Campos</button>
@@ -228,6 +260,13 @@
         <div id="criteriosInfo" class="criterios-info"></div>
 
         <div id="mensajeResultado" class="resultado" style="display: none;"></div>
+        <div id="resumenContainer" class="resumen-container" style="display:none; margin-top:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+                <strong>Resumen (listo para copiar)</strong>
+                <button id="btnCopyResumen" class="btn-copy" style="margin-left:auto;" onclick="copiarResumen()">Copiar</button>
+            </div>
+            <textarea id="resumenText" readonly rows="6" style="width:100%; box-sizing:border-box; margin-top:8px; padding:8px; border:1px solid var(--border-color); border-radius:4px; font-family:inherit;"></textarea>
+        </div>
     </div>
     
     <div class="footer">
@@ -245,32 +284,55 @@
         function limpiar() {
             document.querySelectorAll("table input").forEach(input => input.value = "");
             document.getElementById("mensajeResultado").style.display = "none";
+            const rc = document.getElementById("resumenContainer");
+            if (rc) { rc.style.display = "none"; }
+            const rt = document.getElementById("resumenText");
+            if (rt) { rt.value = ""; }
             document.getElementById("C1").focus(); // Mejora: Vuelve a enfocar el primer campo al borrar
         }
 
         // Función para parsear números que contengan comas(,) o dos puntos (:)
         function parsearNumero(val) {
             if (!val) return NaN;
-            // Convierte "3:00" o "7,30" a "3.00" y "7.30"
-            val = val.replace(":", ".").replace(",", ".");
+            // Normaliza separadores: convierte ":" o "," a "."
+            val = String(val).trim();
+            val = val.replace(/[:\,]/g, ".");
+            // Elimina puntos dobles consecutivos
+            val = val.replace(/\.{2,}/g, ".");
+            // Si hay más de un punto, unir las partes posteriores como decimales
+            const parts = val.split(".");
+            if (parts.length > 2) {
+                val = parts.shift() + "." + parts.join("");
+            }
             return parseFloat(val);
         }
 
         function calcular() {
+            // Valores crudos (tal como los introdujo el usuario)
+            let rawC1 = document.getElementById("C1").value.trim();
+            let rawC2 = document.getElementById("C2").value.trim();
+            let rawC3 = document.getElementById("C3").value.trim();
+            let rawPC = document.getElementById("PC").value.trim();
+            let rawNC = document.getElementById("NC").value.trim();
+            let rawR2 = document.getElementById("R2").value.trim();
+
             // Obtener y parsear los valores
-            let C1 = parsearNumero(document.getElementById("C1").value);
-            let C3 = parsearNumero(document.getElementById("C3").value);
-            let PC = parsearNumero(document.getElementById("PC").value);
-            let R2 = parsearNumero(document.getElementById("R2").value);
+            let C1 = parsearNumero(rawC1);
+            let C3 = parsearNumero(rawC3);
+            let PC = parsearNumero(rawPC);
+            let R2 = parsearNumero(rawR2);
             
             // Textos (para NC que podrían ser palabras o códigos alfanuméricos)
-            let NC = document.getElementById("NC").value.trim().toLowerCase();
+            let NC = rawNC.toLowerCase();
 
             let divResultado = document.getElementById("mensajeResultado");
+            let resumenContainer = document.getElementById("resumenContainer");
+            let resumenText = document.getElementById("resumenText");
 
             // Validar si hay valores mínimos para evaluar
             if (isNaN(C1) || isNaN(C3) || isNaN(R2) || NC === "") {
                 divResultado.style.display = "none";
+                if (resumenContainer) resumenContainer.style.display = "none";
                 return; // Faltan datos críticos para decidir
             }
 
@@ -297,8 +359,8 @@
             let criticosOK = cond_C3 && cond_C1_C3 && cond_R2 && cond_NC_ND;
 
             // -------- CONDICIONES SECUNDARIAS (B) --------
-            let cond_C1_PC = isNaN(PC) ? true : (C1 > PC); // Si PC no se llenó, lo ignoramos temporalmente o asumimos que cumple
-            let cond_C1_730 = C1 > cfg_c1_sug;
+            let cond_C1_PC = isNaN(PC) ? true : (C1 <= PC); // Si PC no se llenó, lo ignoramos temporalmente o asumimos que cumple
+            let cond_C1_730 = C1 <= cfg_c1_sug;
 
             let secundariosOK = cond_C1_PC && cond_C1_730;
 
@@ -311,7 +373,7 @@
 
             let motivosAdvertencia = [];
             if (!cond_C1_PC) motivosAdvertencia.push(`C1 no es mayor que PC`);
-            if (!cond_C1_730) motivosAdvertencia.push(`C1 no supera el valor sugerido de ${cfg_c1_sug}`);
+            if (!cond_C1_730) motivosAdvertencia.push(`C1 no cumple el criterio sugerido (≤ ${cfg_c1_sug})`);
 
             // -------- EVALUAR RESULTADO --------
             divResultado.style.display = "block";
@@ -332,13 +394,33 @@
                 divResultado.innerHTML = "✅ <strong>Válido</strong>";
                 divResultado.className = "resultado valido";
             }
+
+            // Construir resumen usando los valores introducidos por el usuario
+            if (resumenText && resumenContainer) {
+                const summary = `C1: ${rawC1}\nC2: ${rawC2}\nC3: ${rawC3}\nPC: ${rawPC}\nNC: ${rawNC}\nR2: ${rawR2}`;
+                resumenText.value = summary;
+                resumenContainer.style.display = "block";
+            }
+        }
+
+        function copiarResumen() {
+            const rt = document.getElementById('resumenText');
+            const btn = document.getElementById('btnCopyResumen');
+            if (!rt || !rt.value) return;
+            navigator.clipboard.writeText(rt.value).then(() => {
+                const prev = btn.innerText;
+                btn.innerText = 'Copiado';
+                setTimeout(() => btn.innerText = prev, 1400);
+            }).catch(() => {
+                alert('No se pudo copiar al portapapeles');
+            });
         }
 
         function actualizarCriteriosUI(c3, dif_min, dif_max, r2, c1_sug) {
             let html = `<strong>Criterios en uso:</strong>
                 <ul>
-                    <li><strong>Obligatorios:</strong> C3 ≥ ${c3} | Dif (C1-C3) entre ${dif_min} y ${dif_max} | R2 ≥ ${r2} | NC = ND</li>
-                    <li><strong>Recomendados:</strong> C1 > PC | C1 > ${c1_sug}</li>
+                    <li><strong>Obligatorios:</strong> C3 mayor o igual que ${c3} • Diferencia (C1-C3) entre ${dif_min} y ${dif_max} • R2 mayor o igual que ${r2} • NC = ND</li>
+                    <li><strong>Recomendados:</strong> C1 menor o igual que PC • C1 menor o igual que ${c1_sug}</li>
                 </ul>`;
             document.getElementById("criteriosInfo").innerHTML = html;
         }
