@@ -359,7 +359,7 @@
             let criticosOK = cond_C3 && cond_C1_C3 && cond_R2 && cond_NC_ND;
 
             // -------- CONDICIONES SECUNDARIAS (B) --------
-            let cond_C1_PC = isNaN(PC) ? true : (C1 <= PC); // Si PC no se llenó, lo ignoramos temporalmente o asumimos que cumple
+            let cond_C1_PC = isNaN(PC) ? true : (C1 >= PC); // Si PC no se llenó, lo ignoramos temporalmente o asumimos que cumple
             let cond_C1_730 = C1 <= cfg_c1_sug;
 
             let secundariosOK = cond_C1_PC && cond_C1_730;
