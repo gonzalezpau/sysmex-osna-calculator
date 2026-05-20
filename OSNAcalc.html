@@ -420,7 +420,7 @@
             let html = `<strong>Criterios en uso:</strong>
                 <ul>
                     <li><strong>Obligatorios:</strong> C3 mayor o igual que ${c3} • Diferencia (C1-C3) entre ${dif_min} y ${dif_max} • R2 mayor o igual que ${r2} • NC = ND</li>
-                    <li><strong>Recomendados:</strong> C1 menor o igual que PC • C1 menor o igual que ${c1_sug}</li>
+                    <li><strong>Recomendados:</strong> PC ≤ C1 • C1 ≤ ${c1_sug}</li>
                 </ul>`;
             document.getElementById("criteriosInfo").innerHTML = html;
         }
